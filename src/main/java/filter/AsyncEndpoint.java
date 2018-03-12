@@ -50,7 +50,7 @@ public class AsyncEndpoint implements ServletContextListener {
 			try {
 				connection = factory.newConnection();
 				Channel channel = connection.createChannel();
-				channel.queueDeclare("transfmodelo", false, false, false, null);
+				channel.queueDeclare("filtro", false, false, false, null);
 				
 				Consumer consumer = new DefaultConsumer(channel) {
 				  @Override
@@ -71,7 +71,7 @@ public class AsyncEndpoint implements ServletContextListener {
 				  }
 				};
 				
-				channel.basicConsume("transfmodelo", true, consumer);				
+				channel.basicConsume("filtro", true, consumer);				
 				System.out.println("Filtro: Todo listo. Esperando pedidos...");	
 				
 			} catch (IOException | TimeoutException e) {					
