@@ -59,11 +59,11 @@ public class AsyncEndpoint implements ServletContextListener {
 						  							throws IOException {
 				      
 					    String message = new String(body, "UTF-8");
-					    System.out.println(" [x] Received '" + message + "'");
+					    System.out.println(" [x] Mensaje recibido. Filtrando..");
 					    
 					    String processedData = Filter.filter(message);
 					    
-					    System.out.println(" [->] Processed '" + processedData + "'");
+					    System.out.println(" [->] Listo: '" + processedData + "'");
 					    
 					    if (!getNextStep().equals("Fin")) 
 					        sendAsyncMessage2NextStep(processedData);
