@@ -8,6 +8,8 @@ import java.util.concurrent.TimeoutException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.json.JSONObject;
+
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -64,6 +66,15 @@ public class AsyncEndpoint implements ServletContextListener {
 					    String processedData = Filter.filter(message);
 					    
 					    System.out.println(" [->] Listo: '" + processedData + "'");
+					    
+					    try {
+					    	JSONObject a = new JSONObject(processedData);
+					    	System.out.println("Parseado");
+					    	System.out.println(a.toString());
+					    }
+					    catch(Exception e) {
+					    	System.out.println("Failed to parse");
+					    }
 					    
 					    if (!getNextStep().equals("Fin")) 
 					        sendAsyncMessage2NextStep(processedData);
