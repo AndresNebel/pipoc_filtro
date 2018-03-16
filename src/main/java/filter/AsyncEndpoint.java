@@ -65,16 +65,7 @@ public class AsyncEndpoint implements ServletContextListener {
 					    
 					    String processedData = Filter.filter(message);
 					    
-					    System.out.println(" [->] Listo: '" + processedData + "'");
-					    
-					    try {
-					    	JSONObject a = new JSONObject(processedData);
-					    	System.out.println("Parseado");
-					    	System.out.println(a.toString());
-					    }
-					    catch(Exception e) {
-					    	System.out.println("Failed to parse");
-					    }
+					    consolePrint(" [->] Listo: '" + processedData + "'");
 					    
 					    if (!getNextStep().equals("Fin")) 
 					        sendAsyncMessage2NextStep(processedData);
@@ -101,7 +92,7 @@ public class AsyncEndpoint implements ServletContextListener {
 				Channel channel = connection.createChannel();
 				channel.queueDeclare(getNextStep(), false, false, false, null);
 				
-				System.out.println("Filtro: Invocando al proximo paso de la SI: " + getNextStep());
+				System.out.println("Filtro: Proximo paso de la SI: " + getNextStep());
 				
 				channel.basicPublish("", getNextStep(), null, message.getBytes("UTF-8"));
 				
@@ -114,6 +105,13 @@ public class AsyncEndpoint implements ServletContextListener {
 		
 		public  String getNextStep(){
 			return getenv("nextstep");
+		}
+		
+		public void consolePrint(String s){
+			if (s.length() > 200)
+			    System.out.println(s.substring(0, 200) + "...");
+			else
+				System.out.println(s);
 		}
 		
     }
