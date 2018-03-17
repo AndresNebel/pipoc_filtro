@@ -8,8 +8,6 @@ import java.util.concurrent.TimeoutException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.json.JSONObject;
-
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -33,10 +31,6 @@ public class AsyncEndpoint implements ServletContextListener {
             myThread.interrupt();
         } catch (Exception ex) {}
     }
-    
-    public static boolean isEmpty(String str) {
-  		return str == null || str.trim().length() == 0;
-  	}
     
     class IncomingMsgProcess implements Runnable {
 
@@ -67,7 +61,7 @@ public class AsyncEndpoint implements ServletContextListener {
 					    
 					    try {
 					    	 processedData = Filter.filter(message);
-					    	 consolePrint(" [->] Listo: '" + processedData + "'");
+					    	 consolePrint(" [->] Listo.");
 							    
 							 if (!getNextStep().equals("Fin")) 
 							        sendAsyncMessage2NextStep(processedData);
@@ -103,7 +97,7 @@ public class AsyncEndpoint implements ServletContextListener {
 				
 				channel.basicPublish("", getNextStep(), null, message.getBytes("UTF-8"));
 				
-				System.out.println("Filtro: Enviado!: "+message);	
+				System.out.println("Filtro: Enviado!");	
 				
 			} catch (IOException | TimeoutException e) {					
 				e.printStackTrace();
