@@ -62,13 +62,20 @@ public class AsyncEndpoint implements ServletContextListener {
 				      
 					    String message = new String(body, "UTF-8");
 					    System.out.println(" [x] Mensaje recibido. Filtrando..");
+					    					    
+					    String processedData = ""; 
 					    
-					    String processedData = Filter.filter(message);
+					    try {
+					    	 processedData = Filter.filter(message);
+					    	 consolePrint(" [->] Listo: '" + processedData + "'");
+							    
+							 if (!getNextStep().equals("Fin")) 
+							        sendAsyncMessage2NextStep(processedData);
+					    }
+					    catch(Exception e) {
+					    	System.out.println("Catch: "+ e.toString());
+					    }
 					    
-					    consolePrint(" [->] Listo: '" + processedData + "'");
-					    
-					    if (!getNextStep().equals("Fin")) 
-					        sendAsyncMessage2NextStep(processedData);
 					    
 				  }
 				};
