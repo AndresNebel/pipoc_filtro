@@ -55,16 +55,12 @@ public class AsyncEndpoint implements ServletContextListener {
 						  							throws IOException {
 				      
 					    String message = new String(body, "UTF-8");
-					    System.out.println(" [x] Mensaje recibido. Filtrando..");
-					    					    
-					    String processedData = ""; 
+					    String nextStep = getNextStep();
 					    
 					    try {
-					    	 processedData = Filter.filter(message);
-					    	 consolePrint(" [->] Listo.");
-							    
-							 if (!getNextStep().equals("Fin")) 
-							        sendAsyncMessage2NextStep(processedData);
+					    	 String processedData = Filter.filter(message);
+					 		 if (!getNextStep().equals("Fin")) 
+							        sendAsyncMessage2NextStep(processedData, nextStep);
 					    }
 					    catch(Exception e) {
 					    	System.out.println("Catch: "+ e.toString());
@@ -82,7 +78,7 @@ public class AsyncEndpoint implements ServletContextListener {
 			}
 		}   
 		
-		public void sendAsyncMessage2NextStep(String message) {
+		public void sendAsyncMessage2NextStep(String message, String nextStep) {
 			ConnectionFactory factory = new ConnectionFactory();
 			String hostRabbit = getenv("OPENSHIFT_RABBITMQ_SERVICE_HOST");
 			factory.setHost(hostRabbit);
@@ -91,13 +87,8 @@ public class AsyncEndpoint implements ServletContextListener {
 			try {
 				connection = factory.newConnection();
 				Channel channel = connection.createChannel();
-				channel.queueDeclare(getNextStep(), false, false, false, null);
-				
-				System.out.println("Filtro: Proximo paso de la SI: " + getNextStep());
-				
-				channel.basicPublish("", getNextStep(), null, message.getBytes("UTF-8"));
-				
-				System.out.println("Filtro: Enviado!");	
+				channel.queueDeclare(nextStep, false, false, false, null);
+				channel.basicPublish("", nextStep, null, message.getBytes("UTF-8"));					
 				
 			} catch (IOException | TimeoutException e) {					
 				e.printStackTrace();
@@ -107,14 +98,6 @@ public class AsyncEndpoint implements ServletContextListener {
 		public  String getNextStep(){
 			return getenv("nextstep");
 		}
-		
-		public void consolePrint(String s){
-			if (s.length() > 200)
-			    System.out.println(s.substring(0, 200) + "...");
-			else
-				System.out.println(s);
-		}
-		
     }
 
 }
